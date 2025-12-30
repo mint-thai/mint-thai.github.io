@@ -179,11 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Add CSS for ripple effect
 const style = document.createElement('style');
 style.textContent = `
-    .btn {
-        position: relative;
-        overflow: hidden;
-    }
-    
     .ripple {
         position: absolute;
         border-radius: 50%;

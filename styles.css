@@ -168,6 +168,8 @@ body {
     font-weight: 600;
     transition: all 0.3s ease;
     display: inline-block;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-primary {
@@ -557,10 +559,6 @@ section {
 
     .projects-grid {
         grid-template-columns: 1fr;
-    }
-
-    .contact-links {
-        grid-template-columns: repeat(2, 1fr);
     }
 
     .section-title {
