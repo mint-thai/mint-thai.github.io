@@ -49,16 +49,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Navbar background on scroll
+    // Combined scroll handler with throttling for performance
     const navbar = document.querySelector('.navbar');
+    const sectionElements = document.querySelectorAll('section[id]');
+    let scrollTimeout;
+    
     window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-            navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-            navbar.style.backdropFilter = 'blur(10px)';
-        } else {
-            navbar.style.backgroundColor = 'var(--bg-white)';
-            navbar.style.backdropFilter = 'none';
+        // Clear previous timeout
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
         }
+        
+        // Throttle scroll events
+        scrollTimeout = setTimeout(function() {
+            // Update navbar background
+            if (window.scrollY > 50) {
+                navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            } else {
+                navbar.style.backgroundColor = 'var(--bg-white)';
+                navbar.style.backdropFilter = 'none';
+            }
+            
+            // Highlight active nav link
+            let current = '';
+            sectionElements.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${current}`) {
+                    item.classList.add('active');
+                }
+            });
+        }, 10); // Throttle to 10ms
     });
 
     // Intersection Observer for fade-in animations
@@ -85,29 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(section);
     });
 
-    // Highlight active nav link on scroll
-    const sectionElements = document.querySelectorAll('section[id]');
-    
-    window.addEventListener('scroll', function() {
-        let current = '';
-        
-        sectionElements.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            
-            if (window.pageYOffset >= sectionTop - 100) {
-                current = section.getAttribute('id');
-            }
-        });
-
-        navItems.forEach(item => {
-            item.classList.remove('active');
-            if (item.getAttribute('href') === `#${current}`) {
-                item.classList.add('active');
-            }
-        });
-    });
-
     // Add animation to skill tags on hover
     const skillTags = document.querySelectorAll('.skill-tag');
     skillTags.forEach(tag => {
@@ -131,20 +136,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Typing effect for hero subtitle (optional enhancement)
     const subtitle = document.querySelector('.hero-subtitle');
-    const subtitleText = subtitle.textContent;
-    subtitle.textContent = '';
-    
-    let i = 0;
-    function typeWriter() {
-        if (i < subtitleText.length) {
-            subtitle.textContent += subtitleText.charAt(i);
-            i++;
-            setTimeout(typeWriter, 100);
+    if (subtitle) {
+        const subtitleText = subtitle.textContent;
+        subtitle.textContent = '';
+        
+        let i = 0;
+        function typeWriter() {
+            if (i < subtitleText.length) {
+                subtitle.textContent += subtitleText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
         }
+        
+        // Start typing effect after a short delay
+        setTimeout(typeWriter, 500);
     }
-    
-    // Start typing effect after a short delay
-    setTimeout(typeWriter, 500);
 
     // Add click effect to buttons
     const buttons = document.querySelectorAll('.btn');
@@ -169,11 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 600);
         });
     });
-
-    // Console message for visitors
-    console.log('%c👋 Hello there!', 'font-size: 20px; font-weight: bold; color: #6366f1;');
-    console.log('%cThanks for checking out my portfolio!', 'font-size: 14px; color: #6b7280;');
-    console.log('%cFeel free to reach out if you want to collaborate!', 'font-size: 14px; color: #6b7280;');
 });
 
 // Add CSS for ripple effect
