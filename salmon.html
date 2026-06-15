@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI-Powered Salmon Monitoring — Mint Thai</title>
+<meta name="description" content="AI-powered salmon monitoring system achieving ~90% counting accuracy and 98% mAP50, built in partnership with Indigenous fisheries communities." />
+<link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body class="case-dash">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">Mint <b>Thai</b></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    <nav class="topnav" id="topnav">
+      <a href="index.html#about">About</a>
+      <a href="index.html#work">Work</a>
+      <a href="index.html#value">Value</a>
+      <a href="index.html#education">Education</a>
+      <a href="index.html#press">News</a>
+      <a href="index.html#contact">Contact</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+  <section class="detail" data-screen-label="Salmon case study">
+    <a href="index.html#work" class="back">← Back to all work</a>
+    <p class="cs-meta">Thompson Rivers University · Secwépemc Fisheries Commission · Skeetchestn Natural Resources</p>
+    <p class="cs-date">Mar 2025 – Present</p>
+    <h1 class="cs-title">AI-Powered Salmon Monitoring</h1>
+
+    <!-- Problem / Approach / Impact -->
+    <div class="cs-triple">
+      <div class="cs-pcard orange">
+        <span class="lbl">The Problem</span>
+        <p>The SFC and SNR monitor salmon populations to guide conservation and community decisions. Their semi-automated process worked — but manual review and validation of footage could delay results by months, slowing the decisions that depend on them.</p>
+      </div>
+      <div class="cs-pcard peri">
+        <span class="lbl">The Approach</span>
+        <p>An AI system that detects, tracks, and counts salmon straight from stream-camera footage. A custom CV model finds fish per frame, a tracking layer follows individuals to avoid double counts, and length is measured automatically — output that drops into partners’ existing workflows.</p>
+      </div>
+      <div class="cs-pcard pink">
+        <span class="lbl">The Impact</span>
+        <p>Near real-time counts within 1–2% of manually verified truth, cutting processing time roughly in half — freeing the team from months of manual review and laying a foundation for future environmental-monitoring work.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="detail-body" style="padding-top:0">
+
+    <div class="cs-sec">
+      <span class="cs-label">Results</span>
+      <div class="cs-results">
+        <ul>
+          <li><strong>98% mAP50</strong> detection accuracy on evaluation footage</li>
+          <li><strong>~90%</strong> salmon counting accuracy</li>
+          <li>Counts within <strong>1–2%</strong> of manually verified truth</li>
+          <li><strong>~50%</strong> faster processing → near real-time analysis</li>
+          <li>Foundation laid for future AI &amp; environmental monitoring</li>
+          <li>Presented at the <strong>BC PARF Conference</strong>, May 2026</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cs-sec cs-two">
+      <div>
+        <span class="cs-label">My Role &amp; Responsibilities</span>
+        <ul class="cs-bullets">
+          <li>Owned scope, roadmap, and stakeholder alignment end to end</li>
+          <li>Built and trained the detection + tracking pipeline</li>
+          <li>Validated counts frame-by-frame against manual truth data</li>
+          <li>Troubleshot a Linux deployment failure before a key milestone</li>
+          <li>Translated technical progress into plain-language partner updates</li>
+        </ul>
+      </div>
+      <div class="cs-callout">
+        <span class="lbl">The trade-off</span>
+        <p>Optimizing the counting algorithm for rare edge cases made it worse on common ones. I made the deliberate call to prioritize overall accuracy — as long as results stayed within the agreed error margin. It was the right trade-off.</p>
+      </div>
+    </div>
+
+    <div class="cs-sec">
+      <span class="cs-label">What’s Next</span>
+      <div class="cs-callout next">
+        <span class="lbl">Going live</span>
+        <p>The system goes live on-site within weeks. We’ll monitor in the field, gather partner feedback, and keep improving the model.</p>
+      </div>
+    </div>
+
+    <div class="cs-sec">
+      <span class="cs-label">Project Gallery <span class="soft">— drag your own screenshots in</span></span>
+      <div class="cs-gallery">
+        <image-slot id="salmon-c-1" shape="rounded" radius="14" placeholder="Detection / tracking overlay"></image-slot>
+        <image-slot id="salmon-c-2" shape="rounded" radius="14" placeholder="Field deployment"></image-slot>
+        <image-slot id="salmon-c-3" shape="rounded" radius="14" placeholder="Results view"></image-slot>
+      </div>
+    </div>
+
+    <div class="cs-sec">
+      <span class="cs-label">Tools &amp; Methods</span>
+      <div class="tags">
+        <span class="tag blue">Computer Vision</span>
+        <span class="tag mint">YOLOv8</span>
+        <span class="tag yellow">ByteTrack</span>
+        <span class="tag pink">Python</span>
+        <span class="tag orange">Custom counting algorithm</span>
+        <span class="tag peri">Stakeholder alignment</span>
+      </div>
+    </div>
+
+    <a href="index.html#work" class="back" style="margin-top:44px">← Back to all work</a>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Mint Thai</span>
+    <span>Built with care in Kamloops, BC</span>
+  </div>
+</footer>
+
+<template id="__bundler_thumbnail" data-bg-color="#fffdfb">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#fffdfb"/>
+    <circle cx="600" cy="360" r="150" fill="#e9f6f1" stroke="#5bbfa6" stroke-width="10"/>
+    <text x="600" y="410" font-family="Georgia, serif" font-size="130" font-weight="700" fill="#1f6f5c" text-anchor="middle">🐟</text>
+    <text x="600" y="600" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#830c0e" text-anchor="middle">Salmon Monitoring</text>
+  </svg>
+</template>
+
+<script src="image-slot.js"></script>
+<script>
+  const root=document.documentElement, t=document.getElementById('themeToggle');
+  if(localStorage.getItem('mint-theme')==='dark'){ root.setAttribute('data-theme','dark'); t.textContent='☀️'; }
+  t.addEventListener('click',()=>{
+    const d=root.getAttribute('data-theme')==='dark';
+    if(d){ root.removeAttribute('data-theme'); t.textContent='🌙'; localStorage.setItem('mint-theme','light'); }
+    else { root.setAttribute('data-theme','dark'); t.textContent='☀️'; localStorage.setItem('mint-theme','dark'); }
+  });
+  const navToggle=document.getElementById('navToggle'), topnav=document.getElementById('topnav');
+  navToggle.addEventListener('click',()=>{ const open=topnav.classList.toggle('open'); navToggle.setAttribute('aria-expanded',open?'true':'false'); navToggle.textContent=open?'✕':'☰'; });
+  topnav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ topnav.classList.remove('open'); navToggle.setAttribute('aria-expanded','false'); navToggle.textContent='☰'; }));
+</script>
+
+</body>
+</html>
