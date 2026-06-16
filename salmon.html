@@ -29,24 +29,24 @@
 <div class="wrap">
 
   <section class="detail" data-screen-label="Salmon case study">
-    <a href="index.html#work" class="back">← Back to all work</a>
-    <p class="cs-meta">Thompson Rivers University · Secwépemc Fisheries Commission · Skeetchestn Natural Resources</p>
+    <a href="index.html#work" class="back">← Back to Home</a>
+    <p class="cs-meta" style="font-size: 1.1rem; font-weight: 600; letter-spacing: 0.01em; opacity: 1; width: 100%; white-space: nowrap; color: rgb(166, 88, 79)">Thompson Rivers University · Secwépemc Fisheries Commission · Skeetchestn Natural Resources</p>
     <p class="cs-date">Mar 2025 – Present</p>
     <h1 class="cs-title">AI-Powered Salmon Monitoring</h1>
 
     <!-- Problem / Approach / Impact -->
     <div class="cs-triple">
       <div class="cs-pcard orange">
-        <span class="lbl">The Problem</span>
-        <p>The SFC and SNR monitor salmon populations to guide conservation and community decisions. Their semi-automated process worked — but manual review and validation of footage could delay results by months, slowing the decisions that depend on them.</p>
+        <span class="lbl" style="font-size: 15px">The Problem</span>
+        <p>The Secwépemc Fisheries Commission monitors salmon populations in the Deadman Watershed using a resistivity counter and cameras, but the current system is error-prone and requires significant manual labour to validate events. Accurate, timely counts are difficult to deliver, leaving harvest and conservation decisions without the numbers they need until months after the season ends.</p>
       </div>
       <div class="cs-pcard peri">
-        <span class="lbl">The Approach</span>
-        <p>An AI system that detects, tracks, and counts salmon straight from stream-camera footage. A custom CV model finds fish per frame, a tracking layer follows individuals to avoid double counts, and length is measured automatically — output that drops into partners’ existing workflows.</p>
+        <span class="lbl" style="font-size: 15px">The Approach</span>
+        <p>Build an AI system that detects, tracks, and counts salmon directly from camera footage. The system detects salmon in each frame, a tracking layer locks their identities across the video, and a robust counting algorithm increments directional counts while avoiding double-counting. Outputs are stored in a database accessible via a password-protected portal, where partners can download results as CSV files that fit their existing workflows.</p>
       </div>
       <div class="cs-pcard pink">
-        <span class="lbl">The Impact</span>
-        <p>Near real-time counts within 1–2% of manually verified truth, cutting processing time roughly in half — freeing the team from months of manual review and laying a foundation for future environmental-monitoring work.</p>
+        <span class="lbl" style="font-size: 15px">The Impact</span>
+        <p>By automating detection and counting, the system significantly reduces the manual analysis and validation burden on the team — freeing personnel to focus on higher-value work. Instead of waiting for counts after the season ends, partners can now share near real-time estimates with community members and act on them when it matters most.</p>
       </div>
     </div>
   </section>
@@ -54,38 +54,35 @@
   <section class="detail-body" style="padding-top:0">
 
     <div class="cs-sec">
-      <span class="cs-label">Results</span>
+      <span class="cs-label" style="font-size: 15px">Results</span>
       <div class="cs-results">
-        <ul>
-          <li><strong>98% mAP50</strong> detection accuracy on evaluation footage</li>
-          <li><strong>~90%</strong> salmon counting accuracy</li>
-          <li>Counts within <strong>1–2%</strong> of manually verified truth</li>
-          <li><strong>~50%</strong> faster processing → near real-time analysis</li>
-          <li>Foundation laid for future AI &amp; environmental monitoring</li>
+        <ul style="grid-template-columns:1fr">
+          <li><strong>~98% mAP50</strong> across 400 training epochs — the model correctly locates and identifies fish in nearly every frame it sees</li>
+          <li><strong>97% precision</strong> — 97 out of 100 detections are correct</li>
+          <li><strong>99% recall</strong> — out of every 100 real fish that swim through, the model misses only 1</li>
+          <li><strong>98% F1</strong> — accurate and consistent across both precision and recall</li>
+          <li>Upstream counts within <strong>2%</strong> of SFC manually verified numbers</li>
+          <li>Net counts within <strong>1%</strong> of SFC manually verified numbers</li>
           <li>Presented at the <strong>BC PARF Conference</strong>, May 2026</li>
         </ul>
       </div>
     </div>
 
-    <div class="cs-sec cs-two">
+    <div class="cs-sec">
       <div>
-        <span class="cs-label">My Role &amp; Responsibilities</span>
+        <span class="cs-label" style="font-size: 15px">My Role &amp; Responsibilities</span>
         <ul class="cs-bullets">
-          <li>Owned scope, roadmap, and stakeholder alignment end to end</li>
-          <li>Built and trained the detection + tracking pipeline</li>
-          <li>Validated counts frame-by-frame against manual truth data</li>
-          <li>Troubleshot a Linux deployment failure before a key milestone</li>
-          <li>Translated technical progress into plain-language partner updates</li>
+          <li><strong>Product Discovery &amp; Solution Design</strong> — Collaborated with partners to understand their operational challenges, define scope, and translate stakeholder needs into a practical machine learning and computer vision solution.</li>
+          <li><strong>Stakeholder &amp; Partner Management</strong> — Served as the primary point of contact for external partners, managing communications, preparing and presenting proposals and updates, and contributing to the grant application.</li>
+          <li><strong>Machine Learning &amp; Computer Vision Development</strong> — Built the detection and tracking pipeline end-to-end: trained and evaluated YOLOv8 models, implemented ByteTrack tracking and custom counting algorithms, validated results against ground truth, and improved accuracy through iterative testing and refinement.</li>
+          <li><strong>Technical Leadership &amp; Quality Assurance</strong> — Coordinated deployment planning, troubleshot infrastructure and technical issues with vendors to clear blockers and keep development and deployment on track.</li>
+          <li><strong>Project &amp; Delivery Management</strong> — Established the roadmap and project timeline, tracked progress, and worked with faculty supervisors and partners to prioritize tasks and keep execution on schedule.</li>
         </ul>
-      </div>
-      <div class="cs-callout">
-        <span class="lbl">The trade-off</span>
-        <p>Optimizing the counting algorithm for rare edge cases made it worse on common ones. I made the deliberate call to prioritize overall accuracy — as long as results stayed within the agreed error margin. It was the right trade-off.</p>
       </div>
     </div>
 
     <div class="cs-sec">
-      <span class="cs-label">What’s Next</span>
+      <span class="cs-label" style="font-size: 15px">What’s Next</span>
       <div class="cs-callout next">
         <span class="lbl">Going live</span>
         <p>The system goes live on-site within weeks. We’ll monitor in the field, gather partner feedback, and keep improving the model.</p>
@@ -93,7 +90,7 @@
     </div>
 
     <div class="cs-sec">
-      <span class="cs-label">Project Gallery <span class="soft">— drag your own screenshots in</span></span>
+      <span class="cs-label" style="font-size: 15px">Project Gallery</span>
       <div class="cs-gallery">
         <image-slot id="salmon-c-1" shape="rounded" radius="14" placeholder="Detection / tracking overlay"></image-slot>
         <image-slot id="salmon-c-2" shape="rounded" radius="14" placeholder="Field deployment"></image-slot>
@@ -102,18 +99,21 @@
     </div>
 
     <div class="cs-sec">
-      <span class="cs-label">Tools &amp; Methods</span>
+      <span class="cs-label" style="font-size: 15px">Tools &amp; Methods</span>
       <div class="tags">
         <span class="tag blue">Computer Vision</span>
         <span class="tag mint">YOLOv8</span>
         <span class="tag yellow">ByteTrack</span>
         <span class="tag pink">Python</span>
         <span class="tag orange">Custom counting algorithm</span>
-        <span class="tag peri">Stakeholder alignment</span>
+        <span class="tag peri">Transfer Learning</span>
       </div>
     </div>
 
-    <a href="index.html#work" class="back" style="margin-top:44px">← Back to all work</a>
+    <div style="display:flex; gap:16px; align-items:center; margin-top:44px; flex-wrap:wrap;">
+      <a href="index.html#work" class="back" style="margin-top:0">← Back to Home</a>
+      <a href="gentextbook.html" class="back" style="margin-top:0; margin-left:auto;">Next Project →</a>
+    </div>
   </section>
 
 </div>
@@ -151,3 +151,9 @@
 
 </body>
 </html>
+
+<style id="__om-edit-overrides">
+.cs-pcard >:is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,label,span,a,em,strong,small,td,th,caption) >:is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,label,span,a,em,strong,small,td,th,caption) { text-align: justify !important }
+.cs-pcard >:is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,label,span,a,em,strong,small,td,th,caption) >:is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,label,span,a,em,strong,small,td,th,caption) { text-align: center !important }
+.cs-pcard >:is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,label,span,a,em,strong,small,td,th,caption) >:is(h1,h2,h3,h4,h5,h6,p,li,dt,dd,blockquote,figcaption,label,span,a,em,strong,small,td,th,caption) { text-align: left !important }
+</style>
