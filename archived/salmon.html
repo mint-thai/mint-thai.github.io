@@ -91,10 +91,15 @@
 
     <div class="cs-sec">
       <span class="cs-label" style="font-size: 15px">Project Gallery</span>
-      <div class="cs-gallery">
-        <image-slot id="salmon-c-1" shape="rounded" radius="14" placeholder="Detection / tracking overlay"></image-slot>
-        <image-slot id="salmon-c-2" shape="rounded" radius="14" placeholder="Field deployment"></image-slot>
-        <image-slot id="salmon-c-3" shape="rounded" radius="14" placeholder="Results view"></image-slot>
+      <div class="cs-gallery swipe">
+        <div class="cs-swipe-track">
+          <image-slot id="salmon-c-1" src="assets/salmon-card.jpeg" shape="rounded" radius="14" placeholder="Detection / tracking overlay"></image-slot>
+          <image-slot id="salmon-c-2" src="assets/salmon-card-old.jpeg" shape="rounded" radius="14" placeholder="Field deployment"></image-slot>
+        </div>
+        <div class="cs-swipe-actions">
+          <button type="button" class="cs-swipe-btn" onclick="this.parentElement.previousElementSibling.scrollBy({left:-this.parentElement.previousElementSibling.clientWidth,behavior:'smooth'})">Previous</button>
+          <button type="button" class="cs-swipe-btn" onclick="this.parentElement.previousElementSibling.scrollBy({left:this.parentElement.previousElementSibling.clientWidth,behavior:'smooth'})">Next</button>
+        </div>
       </div>
     </div>
 

@@ -47,13 +47,7 @@
 
 (() => {
   const STATE_FILE = '.image-slots.state.json';
-  // 2× a ~600px slot in a 1920-wide deck — retina-sharp without making the
-  // sidecar enormous. A 1200px WebP at q=0.85 is ~150-300KB.
-  const MAX_DIM = 1200;
-  // Raster formats only. SVG is excluded (can carry script; createImageBitmap
-  // on SVG blobs is inconsistent). GIF is excluded because the canvas
-  // re-encode keeps only the first frame, so an animated GIF would silently
-  // go still — better to reject than surprise.
+  const ACCEPT = ['image/gif', 'image/png', 'image/jpeg', 'image/webp'];
   // ── Shared sidecar store ────────────────────────────────────────────────
   // One fetch + immediate write-on-change for every <image-slot> on the
   // page. Reads via fetch() so viewing works anywhere the HTML and sidecar
@@ -166,6 +160,7 @@
     '.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;' +
     '  justify-content:center;gap:6px;text-align:center;padding:12px;box-sizing:border-box;' +
     '  user-select:none;pointer-events:none}' +
+    ':host([data-editable]) .empty{pointer-events:auto;cursor:pointer}' +
     '.empty svg{opacity:.45}' +
     '.empty .cap{max-width:90%;font-weight:500;letter-spacing:.01em}' +
     '.empty .sub{font-size:11px}' +
@@ -222,7 +217,8 @@
         '  <div class="handle" data-c="nw"></div><div class="handle" data-c="ne"></div>' +
         '  <div class="handle" data-c="sw"></div><div class="handle" data-c="se"></div>' +
         '</div>' +
-        '<div class="ctl"></div>';
+        '<div class="ctl"></div>' +
+        '<input type="file" accept="' + ACCEPT.join(',') + '" hidden>';
       this._frame = root.querySelector('.frame');
       this._ring = root.querySelector('.ring');
       this._img = root.querySelector('.frame img');
@@ -231,17 +227,35 @@
       this._sub = root.querySelector('.sub');
       this._spill = root.querySelector('.spill');
       this._ghost = root.querySelector('.ghost');
+      this._input = root.querySelector('input');
       this._err = null;
       this._view = { s: 1, x: 0, y: 0 };
       this._subFn = () => this._render();
       // Shadow-DOM listeners live with the shadow DOM — bound once here so
       // disconnect/reconnect (e.g. React remount) doesn't stack handlers.
+      this._empty.addEventListener('click', () => {
+        if (this.hasAttribute('data-editable')) this._input.click();
+      });
+      this._input.addEventListener('change', () => {
+        const f = this._input.files && this._input.files[0];
+        if (f) this._ingest(f);
+        this._input.value = '';
+      });
       // naturalWidth/Height aren't known until load — re-apply so the cover
       // baseline is computed from real dimensions, not the 100%×100% fallback.
       this._img.addEventListener('load', () => this._applyView());
     }
 
     connectedCallback() {
+      const editable = !!(window.omelette && window.omelette.writeFile);
+      this.toggleAttribute('data-editable', editable);
+      this._sub.style.display = editable ? '' : 'none';
+      if (editable) {
+        this.addEventListener('dragenter', this);
+        this.addEventListener('dragover', this);
+        this.addEventListener('dragleave', this);
+        this.addEventListener('drop', this);
+      }
       subs.add(this._subFn);
       // width%/height% in _applyView encode the frame aspect at call time —
       // a host resize (responsive grid, pane divider) would stretch the
@@ -257,10 +271,66 @@
 
     disconnectedCallback() {
       subs.delete(this._subFn);
+      this.removeEventListener('dragenter', this);
+      this.removeEventListener('dragover', this);
+      this.removeEventListener('dragleave', this);
+      this.removeEventListener('drop', this);
       if (this._ro) { this._ro.disconnect(); this._ro = null; }
     }
 
     attributeChangedCallback() { if (this.shadowRoot) this._render(); }
+
+    handleEvent(e) {
+      if (e.type === 'dragenter' || e.type === 'dragover') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+        this.setAttribute('data-over', '');
+      } else if (e.type === 'dragleave') {
+        this.removeAttribute('data-over');
+      } else if (e.type === 'drop') {
+        e.preventDefault();
+        e.stopPropagation();
+        this.removeAttribute('data-over');
+        const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) this._ingest(f);
+      }
+    }
+
+    async _fileToDataUrl(file) {
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async _ingest(file) {
+      if (!file || ACCEPT.indexOf(file.type) < 0) {
+        this._setError('Drop a GIF, PNG, JPEG, or WebP image.');
+        return;
+      }
+      try {
+        const url = await this._fileToDataUrl(file);
+        const val = { u: url, s: 1, x: 0, y: 0 };
+        setSlot(this.id || '', val);
+        if (!this.id) { this._local = val; this._render(); }
+      } catch (err) {
+        this._setError('Could not read that image.');
+        console.warn('<image-slot> ingest failed:', err);
+      }
+    }
+
+    _setError(msg) {
+      if (this._err) { this._err.remove(); this._err = null; }
+      if (!msg) return;
+      const d = document.createElement('div');
+      d.className = 'err'; d.textContent = msg;
+      this.shadowRoot.appendChild(d);
+      this._err = d;
+      setTimeout(() => { if (this._err === d) { d.remove(); this._err = null; } }, 3000);
+    }
 
     // Cover-baseline geometry, shared by clamp/apply/resize. Null until the
     // img has loaded (naturalWidth is 0 before that) or when the slot has no
