@@ -315,24 +315,28 @@ body[data-layout="wide"] .work-body > :not(.work-shot){ grid-column:2; }
 .value-card .vc-proof{ margin-top:16px;padding-left:16px;border-left:3px solid var(--band);font-style:italic;font-size:.95rem;line-height:1.55;color:var(--ink-2); }
 @media(max-width:680px){ .value-grid{ grid-template-columns:1fr; } }
 
-/* ---------- education ---------- */
-.edu-list{ list-style:none; }
-.edu-item{ display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:baseline;padding:24px 6px;border-top:1px solid var(--line); }
-.edu-item:last-child{ border-bottom:1px solid var(--line); }
-.edu-item h3{ font-family:var(--display);font-weight:700;font-size:1.5rem;letter-spacing:-.02em; }
-.edu-item .edu-year{ font-family:var(--mono);font-size:17px;letter-spacing:.05em;color:var(--ink-2);white-space:nowrap; }
-.edu-item .edu-detail{ grid-column:1;color:var(--ink-2);font-size:1.06rem;line-height:1.6; }
-.edu-item .ph{ color:var(--pink-deep);font-style:italic; }
-
-/* Dean's List — honor label + semester chips */
-.deans{ grid-column:1;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:4px; }
-.deans-label{ font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--pink-deep);white-space:nowrap; }
-.deans-terms{ display:flex;flex-wrap:wrap;gap:6px; }
-.deans .term{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
-  color:var(--ink-2);background:color-mix(in srgb, var(--pink) 14%, transparent);
-  border:1px solid color-mix(in srgb, var(--pink) 32%, transparent);
-  padding:3px 9px;border-radius:999px;white-space:nowrap;
+/* ---------- education (timeline) ---------- */
+.edu-list{ list-style:none;margin:0;padding:0; }
+.edu-item{ display:grid;grid-template-columns:90px 1fr;gap:0 28px;position:relative;padding:0 0 38px 0; }
+.edu-item:last-child{ padding-bottom:0; }
+.edu-rail{ display:flex;justify-content:flex-end;align-items:flex-start; }
+.edu-year{ font-family:var(--mono);font-weight:700;font-size:1.05rem;line-height:1.25;letter-spacing:.03em;color:var(--ink); }
+.edu-conn{ position:absolute;left:calc(90px + 13px);top:13px;bottom:0;width:2px;background:var(--line); }
+.edu-dot{ position:absolute;left:calc(90px + 8px);top:4px;width:13px;height:13px;border-radius:50%;background:var(--pink-deep);border:3px solid var(--bg);z-index:1; }
+.edu-body{ padding-left:16px; }
+.edu-body h3{ font-family:var(--display);font-weight:700;font-size:1.4rem;letter-spacing:-.02em;margin:0 0 12px;line-height:1.3; }
+.edu-school{ color:var(--ink-2);font-size:1.05rem;margin:0 0 12px; }
+.edu-chips{ display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px; }
+.edu-tag{ font-family:var(--mono);font-size:.76rem;font-weight:700;letter-spacing:.03em;padding:5px 12px;border-radius:8px;white-space:nowrap; }
+.edu-tag.gpa{ color:var(--ink);background:var(--bg-soft);border:1px solid var(--line); }
+.edu-tag.honor{ color:#2f8fd6;background:color-mix(in srgb,var(--blue) 16%,transparent);border:1px solid color-mix(in srgb,var(--blue) 55%,var(--line)); }
+.deans{ display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 8px;margin:0; }
+.deans-star{ color:var(--pink-deep);font-size:1.1rem;line-height:1;align-self:center; }
+.deans-label{ font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--pink-deep);white-space:nowrap; }
+.deans-plain{ font-family:var(--mono);font-size:.78rem;letter-spacing:.02em;color:var(--ink-2); }
+@media(max-width:560px){
+  .edu-item{ grid-template-columns:64px 1fr;gap:0 18px; }
+  .edu-conn{ left:calc(64px + 13px); } .edu-dot{ left:calc(64px + 8px); }
 }
 
 /* ---------- press / speaking ---------- */
@@ -435,13 +439,16 @@ body.case-dash .detail{ padding:30px 0 0; }
 
 /* section wrapper + label */
 .cs-sec{ margin-top:38px; }
+.cs-ah{ font-family:var(--display);font-size:1.3rem;font-weight:800;letter-spacing:-.01em;color:var(--ink);margin:0 0 14px;padding-left:15px;border-left:4px solid var(--accent,var(--pink-deep));line-height:1.15; }
+.cs-ah.orange{ --accent:#f59064; } .cs-ah.peri{ --accent:var(--peri); } .cs-ah.pink{ --accent:var(--pink-deep); } .cs-ah.blue{ --accent:#2f8fd6; } .cs-ah.neutral{ --accent:var(--line); }
+.cs-ptext{ font-size:1rem;line-height:1.7;color:var(--ink-2);margin:0;text-align:justify; }
 .cs-label{ display:block;font-family:var(--mono);font-size:.875rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-deep);margin-bottom:16px; }
 .cs-label .soft{ text-transform:none;letter-spacing:0;color:var(--ink-2);font-weight:400; }
 
 /* Problem / Approach / Impact — three cards w/ colored top rule */
-.cs-triple{ display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px; }
-.cs-pcard{ border:1px solid var(--line);border-top:4px solid var(--accent,var(--pink-deep));border-radius:18px;background:var(--card);padding:22px 20px;box-shadow:var(--shadow); }
-.cs-pcard .lbl{ display:block;font-family:var(--mono);font-size:.875rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,var(--pink-deep));margin-bottom:12px; }
+.cs-triple{ display:grid;grid-template-columns:1fr;gap:14px;margin-top:30px; }
+.cs-pcard{ border:1px solid var(--line);border-left:4px solid var(--accent,var(--pink-deep));border-radius:14px;background:var(--card);padding:20px 22px;box-shadow:var(--shadow); }
+.cs-pcard .lbl{ display:block;font-family:var(--mono);font-size:.875rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,var(--pink-deep));margin-bottom:8px; }
 .cs-pcard p{ font-size:1rem;line-height:1.7;color:var(--ink-2);margin:0; }
 .cs-pcard.orange{ --accent:#f59064; } .cs-pcard.peri{ --accent:var(--peri); } .cs-pcard.pink{ --accent:var(--pink-deep); }
 
@@ -451,6 +458,19 @@ body.case-dash .detail{ padding:30px 0 0; }
 .cs-results li,.cs-bullets li{ position:relative;padding-left:24px;line-height:1.6;font-size:1rem;color:var(--ink); }
 .cs-results li::before,.cs-bullets li::before{ content:'→';position:absolute;left:0;color:var(--pink-deep);font-weight:700; }
 .cs-results li strong,.cs-bullets li strong{ color:var(--ink); }
+.rolelist li::before{ content:'\2605';color:var(--pink-deep); }
+.dotlist li::before{ content:'\2022';color:var(--pink-deep);font-size:1.1em;top:-.04em; }
+.cs-results-pink{ background:color-mix(in srgb,var(--pink) 9%,transparent);border-color:color-mix(in srgb,var(--pink-deep) 22%,var(--line)); }
+.cs-results-blue{ background:color-mix(in srgb,var(--blue) 16%,transparent);border-color:color-mix(in srgb,var(--blue) 55%,var(--line)); }
+.cs-results-blue.rolelist li::before,.cs-results-blue .rolelist li::before{ color:#2f8fd6; }
+.cs-box-plain .imp-lead:first-child,.cs-box-plain p:first-child{ margin-top:0; }
+.cs-box-plain{ padding:24px 26px; }
+.cs-box-plain .lbl{ margin-bottom:14px; }
+.cs-box-plain .imp-lead{ color:var(--ink-2);font-size:1rem;line-height:1.7; }
+.cs-box-plain .imp-stats:last-child{ margin-bottom:0; }
+.pcard-steps{ list-style:none;display:flex;flex-direction:column;gap:9px;margin:0; }
+.pcard-steps li{ position:relative;padding-left:22px;line-height:1.55;font-size:.97rem;color:var(--ink); }
+.pcard-steps li::before{ content:'';position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--peri); }
 
 /* Role + decision callout two-up */
 .cs-two{ display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start; }
@@ -460,6 +480,32 @@ body.case-dash .detail{ padding:30px 0 0; }
 .cs-callout{ border-left:4px solid var(--peri);background:color-mix(in srgb,var(--peri) 10%,transparent);border-radius:0 14px 14px 0;padding:20px 24px; }
 .cs-callout .lbl{ display:block;font-family:var(--mono);font-weight:700;font-size:.875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--peri);margin-bottom:9px; }
 .cs-callout p{ font-family:var(--display);font-style:italic;font-weight:600;font-size:1.08rem;line-height:1.6;color:#5d60c9;margin:0; }
+
+/* ── Impact: creative metric display ── */
+.imp-lead{ text-align:justify;margin-bottom:24px;line-height:1.7;font-size:1.06rem;color:var(--ink); }
+.imp-stats{ display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px; }
+.imp-stat{ position:relative;border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px 18px 18px;box-shadow:var(--shadow);overflow:hidden; }
+.imp-stat::before{ content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--peri); }
+.imp-stat .num{ font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:2.5rem;line-height:1;color:var(--ink);display:block; }
+.imp-stat .nm{ font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--peri);margin:8px 0 7px;display:block; }
+.imp-stat .ds{ font-size:.82rem;line-height:1.45;color:var(--ink-2);display:block; }
+.imp-cap{ font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.04em;color:var(--ink-2);margin-bottom:30px; }
+.imp-sublabel{ display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:14px; }
+.imp-sublabel::after{ content:'';flex:1;height:1px;background:var(--line); }
+.imp-validate{ display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px; }
+.imp-vcard{ display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-left:4px solid var(--pink-deep);border-radius:0 14px 14px 0;background:color-mix(in srgb,var(--pink) 9%,transparent);padding:18px 22px; }
+.imp-vcard .pct{ font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:2.4rem;line-height:1;color:var(--pink-deep);white-space:nowrap; }
+.imp-vcard .vt{ font-size:.95rem;line-height:1.4;color:var(--ink); }
+.imp-vcard .vt strong{ display:block;font-family:var(--display);font-size:1.02rem;font-weight:800;letter-spacing:-.01em;text-transform:none;color:var(--ink);margin-bottom:3px; }
+.imp-badge{ display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.82rem;font-weight:700;letter-spacing:.04em;color:var(--ink);background:var(--bg-soft);border:1px solid var(--line);padding:11px 18px;border-radius:100px; }
+.imp-badge .dot{ width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0; }
+.imp-badge b{ color:var(--pink-deep);font-weight:700; }
+@media(max-width:620px){ .imp-stats{ grid-template-columns:1fr 1fr; } .imp-validate{ grid-template-columns:1fr; } }
+.imp-stats-2{ grid-template-columns:1fr 1fr; }
+.imp-stat.pinkfill{ background:var(--card); }
+.imp-stat.pinkfill::before{ background:var(--pink-deep); }
+.imp-stat.pinkfill .num{ color:var(--pink-deep); }
+.imp-stat.pinkfill .nm{ color:var(--ink); }
 [data-theme="dark"] .cs-callout p{ color:#b9bbff; }
 .cs-callout.next{ border-left-color:#f59064;background:color-mix(in srgb,#f59064 10%,transparent); }
 .cs-callout.next .lbl{ color:#c7572b; }

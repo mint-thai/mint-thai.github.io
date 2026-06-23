@@ -1,15 +1,13 @@
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
 /* BEGIN USAGE */
 /**
- * <image-slot> — user-fillable image placeholder.
+ * <image-slot> — read-only image placeholder.
  *
- * Drop this into a deck, mockup, or page wherever you want the user to
- * supply an image. You control the slot's shape and size; the user fills it
- * by dragging an image file onto it (or clicking to browse). The dropped
- * image persists across reloads via a .image-slots.state.json sidecar —
- * same read-via-fetch / write-via-window.omelette pattern as
- * design_canvas.jsx, so the filled slot shows on share links, downloaded
- * zips, and PPTX export. Outside the omelette runtime the slot is read-only.
+ * Drop this into a deck, mockup, or page wherever you want a fixed image
+ * frame. You control the slot's shape and size; the element renders an
+ * author-supplied `src` or any preloaded sidecar image, but it does not
+ * accept user uploads. Outside the omelette runtime the slot remains
+ * read-only.
  *
  * The host bridge only allows sidecar writes at the project root, so the
  * HTML that uses this component is assumed to live at the project root too
@@ -32,16 +30,15 @@
  *                corner-drag to scale. The crop persists alongside the image
  *                in the sidecar. contain/fill stay static.
  *   position     object-position for fit=contain|fill.     (default '50% 50%')
- *   placeholder  Empty-state caption.                      (default 'Drop an image')
- *   src          Optional initial/fallback image URL. A user drop overrides
- *                it; clearing the drop reveals src again.
+ *   placeholder  Empty-state caption.                      (default 'Image placeholder')
+ *   src          Optional initial/fallback image URL.
  *
  * Size and layout come from ordinary CSS on the element — width/height
  * inline or from a parent grid — so it composes with any layout.
  *
  * Usage:
  *   <image-slot id="hero"   style="width:800px;height:450px" shape="rounded" radius="20"
- *               placeholder="Drop a hero image"></image-slot>
+ *               placeholder="Hero image"></image-slot>
  *   <image-slot id="avatar" style="width:120px;height:120px" shape="circle"></image-slot>
  *   <image-slot id="kite"   style="width:300px;height:300px"
  *               mask="polygon(50% 0, 100% 50%, 50% 100%, 0 50%)"></image-slot>
@@ -240,7 +237,7 @@
         '  <img part="image" alt="" draggable="false" style="display:none">' +
         '  <div class="empty" part="empty">' + icon +
         '    <div class="cap"></div>' +
-        '    <div class="sub">or <u>browse files</u></div></div>' +
+        '    <div class="sub">Read only</div></div>' +
         '  <div class="ring" part="ring"></div>' +
         '</div>' +
         '<div class="spill">' +
@@ -248,8 +245,7 @@
         '  <div class="handle" data-c="nw"></div><div class="handle" data-c="ne"></div>' +
         '  <div class="handle" data-c="sw"></div><div class="handle" data-c="se"></div>' +
         '</div>' +
-        '<div class="ctl"><button data-act="replace" title="Replace image">Replace</button>' +
-        '  <button data-act="clear" title="Remove image">Remove</button></div>' +
+        '<div class="ctl"></div>' +
         '<input type="file" accept="' + ACCEPT.join(',') + '" hidden>';
       this._frame = root.querySelector('.frame');
       this._ring = root.querySelector('.ring');
@@ -260,135 +256,16 @@
       this._spill = root.querySelector('.spill');
       this._ghost = root.querySelector('.ghost');
       this._err = null;
-      this._input = root.querySelector('input');
-      this._depth = 0;
-      this._gen = 0;
       this._view = { s: 1, x: 0, y: 0 };
       this._subFn = () => this._render();
       // Shadow-DOM listeners live with the shadow DOM — bound once here so
       // disconnect/reconnect (e.g. React remount) doesn't stack handlers.
-      this._empty.addEventListener('click', () => this._input.click());
-      root.addEventListener('click', (e) => {
-        const act = e.target && e.target.getAttribute && e.target.getAttribute('data-act');
-        if (act === 'replace') { this._exitReframe(true); this._input.click(); }
-        if (act === 'clear') {
-          this._exitReframe(false);
-          this._gen++;
-          this._local = null;
-          if (this.id) setSlot(this.id, null); else this._render();
-        }
-      });
-      this._input.addEventListener('change', () => {
-        const f = this._input.files && this._input.files[0];
-        if (f) this._ingest(f);
-        this._input.value = '';
-      });
       // naturalWidth/Height aren't known until load — re-apply so the cover
       // baseline is computed from real dimensions, not the 100%×100% fallback.
       this._img.addEventListener('load', () => this._applyView());
-      // Gated on editable + fit=cover so share links and contain/fill slots
-      // stay static.
-      this.addEventListener('dblclick', (e) => {
-        if (!this.hasAttribute('data-editable') || !this._reframes()) return;
-        e.preventDefault();
-        if (this.hasAttribute('data-reframe')) this._exitReframe(true);
-        else this._enterReframe();
-      });
-      // Pan + resize both originate on the spill layer. A handle pointerdown
-      // drives an aspect-locked resize anchored at the opposite corner; any
-      // other pointerdown on the spill pans. Offsets are frame-% so a
-      // reframed slot survives responsive resize / PPTX export.
-      this._spill.addEventListener('pointerdown', (e) => {
-        if (e.button !== 0 || !this.hasAttribute('data-reframe')) return;
-        e.preventDefault();
-        e.stopPropagation();
-        this._spill.setPointerCapture(e.pointerId);
-        const rect = this.getBoundingClientRect();
-        const fw = rect.width || 1, fh = rect.height || 1;
-        const corner = e.target.getAttribute && e.target.getAttribute('data-c');
-        let move;
-        if (corner) {
-          // Resize about the OPPOSITE corner. Viewport-px throughout (rect
-          // fw/fh, not clientWidth) so the math survives a transform:scale()
-          // ancestor — deck_stage renders slides scaled-to-fit.
-          const iw = this._img.naturalWidth || 1, ih = this._img.naturalHeight || 1;
-          const base = Math.max(fw / iw, fh / ih);
-          const sx = corner.includes('e') ? 1 : -1;
-          const sy = corner.includes('s') ? 1 : -1;
-          const s0 = this._view.s;
-          const w0 = iw * base * s0, h0 = ih * base * s0;
-          const cx0 = (50 + this._view.x) / 100 * fw;
-          const cy0 = (50 + this._view.y) / 100 * fh;
-          const ox = cx0 - sx * w0 / 2, oy = cy0 - sy * h0 / 2;
-          const diag0 = Math.hypot(w0, h0);
-          const ux = sx * w0 / diag0, uy = sy * h0 / diag0;
-          move = (ev) => {
-            const proj = (ev.clientX - rect.left - ox) * ux +
-                         (ev.clientY - rect.top - oy) * uy;
-            const s = clampS(s0 * proj / diag0);
-            const d = diag0 * s / s0;
-            this._view.s = s;
-            this._view.x = (ox + ux * d / 2) / fw * 100 - 50;
-            this._view.y = (oy + uy * d / 2) / fh * 100 - 50;
-            this._clampView();
-            this._applyView();
-          };
-        } else {
-          this.setAttribute('data-panning', '');
-          const start = { px: e.clientX, py: e.clientY, x: this._view.x, y: this._view.y };
-          move = (ev) => {
-            this._view.x = start.x + (ev.clientX - start.px) / fw * 100;
-            this._view.y = start.y + (ev.clientY - start.py) / fh * 100;
-            this._clampView();
-            this._applyView();
-          };
-        }
-        const up = () => {
-          try { this._spill.releasePointerCapture(e.pointerId); } catch {}
-          this._spill.removeEventListener('pointermove', move);
-          this._spill.removeEventListener('pointerup', up);
-          this._spill.removeEventListener('pointercancel', up);
-          this.removeAttribute('data-panning');
-          this._dragUp = null;
-        };
-        // Stashed so _exitReframe (Escape / outside-click mid-drag) can
-        // tear the capture + listeners down synchronously.
-        this._dragUp = up;
-        this._spill.addEventListener('pointermove', move);
-        this._spill.addEventListener('pointerup', up);
-        this._spill.addEventListener('pointercancel', up);
-      });
-      // Wheel zoom stays available inside reframe mode as a trackpad nicety —
-      // zooms toward the cursor (offset' = cursor·(1-k) + offset·k).
-      this.addEventListener('wheel', (e) => {
-        if (!this.hasAttribute('data-reframe')) return;
-        e.preventDefault();
-        const r = this.getBoundingClientRect();
-        const cx = (e.clientX - r.left) / r.width * 100 - 50;
-        const cy = (e.clientY - r.top) / r.height * 100 - 50;
-        const prev = this._view.s;
-        const next = clampS(prev * Math.pow(1.0015, -e.deltaY));
-        if (next === prev) return;
-        const k = next / prev;
-        this._view.s = next;
-        this._view.x = cx * (1 - k) + this._view.x * k;
-        this._view.y = cy * (1 - k) + this._view.y * k;
-        this._clampView();
-        this._applyView();
-      }, { passive: false });
     }
 
     connectedCallback() {
-      // Warn once per page — an id-less slot works for the session but
-      // cannot persist, and two id-less slots would share nothing.
-      if (!this.id && !ImageSlot._warned) {
-        ImageSlot._warned = true;
-        console.warn('<image-slot> without an id will not persist its dropped image.');
-      }
-      this.addEventListener('dragenter', this);
-      this.addEventListener('dragover', this);
-      this.addEventListener('dragleave', this);
-      this.addEventListener('drop', this);
       subs.add(this._subFn);
       // width%/height% in _applyView encode the frame aspect at call time —
       // a host resize (responsive grid, pane divider) would stretch the
@@ -404,113 +281,10 @@
 
     disconnectedCallback() {
       subs.delete(this._subFn);
-      this.removeEventListener('dragenter', this);
-      this.removeEventListener('dragover', this);
-      this.removeEventListener('dragleave', this);
-      this.removeEventListener('drop', this);
       if (this._ro) { this._ro.disconnect(); this._ro = null; }
-      this._exitReframe(false);
-    }
-
-    _enterReframe() {
-      if (this.hasAttribute('data-reframe')) return;
-      this.setAttribute('data-reframe', '');
-      this._applyView();
-      // Close on click outside (the spill handler stopPropagation()s so
-      // in-image drags don't reach this) and on Escape. Listeners are held
-      // on the instance so _exitReframe / disconnectedCallback can detach
-      // exactly what was attached.
-      this._outside = (e) => {
-        if (e.composedPath && e.composedPath().includes(this)) return;
-        this._exitReframe(true);
-      };
-      this._esc = (e) => { if (e.key === 'Escape') this._exitReframe(true); };
-      document.addEventListener('pointerdown', this._outside, true);
-      document.addEventListener('keydown', this._esc, true);
-    }
-
-    _exitReframe(commit) {
-      if (!this.hasAttribute('data-reframe')) return;
-      if (this._dragUp) this._dragUp();
-      this.removeAttribute('data-reframe');
-      this.removeAttribute('data-panning');
-      if (this._outside) document.removeEventListener('pointerdown', this._outside, true);
-      if (this._esc) document.removeEventListener('keydown', this._esc, true);
-      this._outside = this._esc = null;
-      if (commit) this._commitView();
     }
 
     attributeChangedCallback() { if (this.shadowRoot) this._render(); }
-
-    // handleEvent — one listener object for all four drag events keeps the
-    // add/remove symmetric and the depth counter correct.
-    handleEvent(e) {
-      if (e.type === 'dragenter' || e.type === 'dragover') {
-        // Without preventDefault the browser never fires 'drop'.
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
-        if (e.type === 'dragenter') this._depth++;
-        this.setAttribute('data-over', '');
-      } else if (e.type === 'dragleave') {
-        // dragenter/leave fire for every descendant crossing — count depth
-        // so hovering the icon inside the empty state doesn't flicker.
-        if (--this._depth <= 0) { this._depth = 0; this.removeAttribute('data-over'); }
-      } else if (e.type === 'drop') {
-        e.preventDefault();
-        e.stopPropagation();
-        this._depth = 0;
-        this.removeAttribute('data-over');
-        const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-        if (f) this._ingest(f);
-      }
-    }
-
-    async _ingest(file) {
-      this._setError(null);
-      if (!file || ACCEPT.indexOf(file.type) < 0) {
-        this._setError('Drop a PNG, JPEG, WebP, or AVIF image.');
-        return;
-      }
-      // toDataUrl can take hundreds of ms on a large photo. A Clear or a
-      // newer drop during that window would be clobbered when this await
-      // resumes — bump + capture a generation so stale encodes bail.
-      const gen = ++this._gen;
-      try {
-        const w = this.clientWidth || this.offsetWidth || MAX_DIM;
-        const url = await toDataUrl(file, w);
-        if (gen !== this._gen) return;
-        // Only exit reframe once the new image is in hand — a rejected type
-        // or decode failure leaves the in-progress crop untouched.
-        this._exitReframe(false);
-        const val = { u: url, s: 1, x: 0, y: 0 };
-        setSlot(this.id || '', val);
-        // Keep a session-local copy for id-less slots so the drop still
-        // shows, even though it cannot persist.
-        if (!this.id) { this._local = val; this._render(); }
-      } catch (err) {
-        if (gen !== this._gen) return;
-        this._setError('Could not read that image.');
-        console.warn('<image-slot> ingest failed:', err);
-      }
-    }
-
-    _setError(msg) {
-      if (this._err) { this._err.remove(); this._err = null; }
-      if (!msg) return;
-      const d = document.createElement('div');
-      d.className = 'err'; d.textContent = msg;
-      this.shadowRoot.appendChild(d);
-      this._err = d;
-      setTimeout(() => { if (this._err === d) { d.remove(); this._err = null; } }, 3000);
-    }
-
-    // Reframing (pan/resize) is only meaningful for fit=cover — contain/fill
-    // keep the old object-fit path and double-click is a no-op.
-    _reframes() {
-      return this.hasAttribute('data-filled') &&
-        (this.getAttribute('fit') || 'cover') === 'cover';
-    }
 
     // Cover-baseline geometry, shared by clamp/apply/resize. Null until the
     // img has loaded (naturalWidth is 0 before that) or when the slot has no
@@ -592,10 +366,7 @@
       this._ring.style.borderRadius = mask ? '' : radius;
       this._ring.style.display = mask ? 'none' : '';
 
-      // Controls and reframe entry gate on this so share links stay read-only.
-      const editable = !!(window.omelette && window.omelette.writeFile);
-      this.toggleAttribute('data-editable', editable);
-      this._sub.style.display = editable ? '' : 'none';
+      this._sub.style.display = 'none';
 
       // Content. The sidecar is also writable by the agent's write_file
       // tool, so its value isn't guaranteed canvas-originated — only accept
@@ -607,14 +378,12 @@
       this._userUrl = (stored && stored.u) || null;
       const url = this._userUrl || srcAttr;
       // Don't clobber an in-flight reframe with a store-triggered re-render.
-      if (!this.hasAttribute('data-reframe')) {
-        this._view = {
-          s: stored && Number.isFinite(stored.s) ? clampS(stored.s) : 1,
-          x: stored && Number.isFinite(stored.x) ? stored.x : 0,
-          y: stored && Number.isFinite(stored.y) ? stored.y : 0,
-        };
-      }
-      this._cap.textContent = this.getAttribute('placeholder') || 'Drop an image';
+      this._view = {
+        s: stored && Number.isFinite(stored.s) ? clampS(stored.s) : 1,
+        x: stored && Number.isFinite(stored.x) ? stored.x : 0,
+        y: stored && Number.isFinite(stored.y) ? stored.y : 0,
+      };
+      this._cap.textContent = this.getAttribute('placeholder') || 'Image placeholder';
       // Toggle via style.display — the [hidden] attribute alone loses to
       // the display:flex / display:block rules in the stylesheet above.
       if (url) {
