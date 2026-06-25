@@ -1,0 +1,2 @@
+assets/salmon-demo.gif filter=lfs diff=lfs merge=lfs -text
+assets/salmon-demo-portrait.gif filter=lfs diff=lfs merge=lfs -text
