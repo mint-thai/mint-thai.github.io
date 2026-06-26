@@ -1,0 +1,6 @@
+# Local-only files
+local/
+
+# macOS
+.DS_Store
+assets/.DS_Store
